@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code snip</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        input,
+        textarea
+         {
+            display : flex;
+            flex-direction: Column;
+            width: 100%;
+            padding: 5px;
+            margin: 10px 0;
+        }
+        button {
+            background: silver;
+            color: black;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin: 5px 5px 5px 5px;
+            transition: background-color 0.2s;
+        }
+        #result {
+            margin-top: 15px;
+        }
+        button:active{
+            background: gray;
+        }
+        
+    </style>
+</head>
+<body>
+    <button onclick="window.location.href='addendum.html'">code index</button>
+    <input type="text" id="topic" placeholder="Topic">
+    <input type="text" id="description" placeholder="description">
+    <textarea id="code" placeholder="code here!"></textarea>
+    <button onclick="submitcode()">Submit</button>
+    <button onclick="allcode()">View All</button>
+    <input type="number" id="topic_id" placeholder="topic id">
+    <button onclick="loadcode()">load Code</button>
+    <button onclick="deletecode()">Delete</button>
+    <div id="result"></div>
+    
+    <script>
+        const API_URL = "http://localhost:8000"
+        async function submitcode() {
+            try{
+            const code_topic = document.getElementById("topic").value.trim()
+            const code_description = document.getElementById("description").value
+            const code_detail = document.getElementById("code").value
+            
+            
+            if (!code_topic) {
+                document.getElementById("result").innerHTML = "Topic cannot be empty"
+                return
+            }
+
+            const payload = {
+                topic : code_topic,
+                description : code_description || null,
+                code : code_detail 
+            }
+            document.getElementById("result").innerHTML = "Creating Code 🧑‍💻"
+            console.log('Payload', payload)
+
+            const response = await fetch(API_URL+'/snip/', {
+                method : 'POST',
+                headers : { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            console.log('Response status', response.status);
+            if (!response.ok){
+                throw new Error(`API Error : ${response.status} ${response.statusText}`)
+            }
+            const data = await response.json();
+            document.getElementById("result").innerHTML = `✅ Create Code snip : ID ${data.topic_id}`
+
+            document.getElementById("topic").value = '';
+            document.getElementById("description").value = '';
+            document.getElementById("code").value = '';
+        } catch (error) {
+            console.error('Full error details:', error);
+            document.getElementById('result').innerHTML = `❌ Error: ${error.message}<br><small>Check console (F12) for details</small>`;
+        }
+    }
+
+        async function loadcode(){
+            try{
+            const topic_id = document.getElementById("topic_id").value.trim()
+            if (!topic_id) {
+                document.getElementById('result').innerHTML = 'Topic ID cannot be empty'
+                return
+            }
+            const response = await fetch(API_URL+'/snip/'+topic_id, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            })
+
+            if (!response.ok){
+                throw new Error(`API Error: ${response.status} ${response.statusText}`)
+            }
+            const data = await response.json();
+            document.getElementById('result').innerHTML = `
+            <p>${data.topic_id}. ${data.topic}</p>
+            <br><p>${data.description}</p>
+            <br><pre>${data.code}</pre>`
+        } catch (error) {
+            console.log('Error', error)
+            document.getElementById('result').innerHTML = `Error: ${error.message}`
+        }
+    }
+
+        async function allcode(){
+            try{
+            const response = await fetch(API_URL+'/snip/', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            })
+
+            if (!response.ok){
+                throw new Error(`API Error: ${response.status} ${response.statusText}`)
+            }
+            const data = await response.json();
+            let html = '<h2>All Code Snippets</h2>'
+            data.forEach(item => {
+                html += `
+                <div style="border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px;">
+                    <p><strong>${item.topic_id}. ${item.topic}</strong></p>
+                    <p>${item.description}</p>
+                    <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto;">${item.code}</pre>
+                </div>`
+            })
+            document.getElementById('result').innerHTML = html
+        } catch (error) {
+            console.log('Error', error)
+            document.getElementById('result').innerHTML = `Error: ${error.message}`
+        }
+    }
+        async function deletecode() {
+            const topic_id = document.getElementById('topic_id').value
+            try{
+                const response = await fetch(API_URL+'/snip/'+topic_id, {
+                    method: 'Delete',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                if (!response.ok){
+                    throw new Error(`API Error : ${response.status} ${response.statusText}`)
+                }
+                const data = await response.json()
+                document.getElementById('result').innerHTML = `${data.message}`
+                document.getElementById('topic_id').innerHTML = ''
+            } catch (error) {
+                cosole.log('Error', error)
+                document.getElementById('result').innerHTML = `Topic Id Not Found`
+            }
+        }
+    </script>
+</body>
+</html>

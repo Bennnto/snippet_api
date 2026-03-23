@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Snippets Index</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .snippet-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .snippet-card:hover {
+            background: #f0f0f0;
+        }
+        .snippet-id {
+            color: blue;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .snippet-topic {
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .snippet-description {
+            font-size: 12px;
+            color: #666;
+        }
+        a {
+            color: blue;
+            text-decoration: none;
+            padding: 5px 10px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">← Back to Create Snippets</a>
+    <h1>📋 Code Index</h1>
+    <div id="snippet-list" class="loading">Loading snippets...</div>
+
+    <script>
+        const API_URL = "http://localhost:8000"
+
+        async function loadAllSnippets() {
+            try {
+                const response = await fetch(API_URL + '/snip/')
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`)
+                }
+                const data = await response.json()
+                
+                if (data.length === 0) {
+                    document.getElementById('snippet-list').innerHTML = '<p style="text-align: center; color: #999;">No snippets yet. <a href="/">Create one</a></p>'
+                    return
+                }
+
+                let html = ''
+                data.forEach(item => {
+                    html += `
+                    <div class="snippet-card" onclick="viewSnippet(${item.topic_id})">
+                        <div class="snippet-id">ID: ${item.topic_id}</div>
+                        <div class="snippet-topic">${item.topic}</div>
+                        <div class="snippet-description">${item.description || 'No description'}</div>
+                    </div>`
+                })
+                document.getElementById('snippet-list').innerHTML = html
+            } catch (error) {
+                document.getElementById('snippet-list').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`
+            }
+        }
+
+        function viewSnippet(id) {
+            // You can navigate to a detail view or open in modal
+            alert(`Snippet ID: ${id}`)
+        }
+
+        // Load snippets when page loads
+        loadAllSnippets()
+    </script>
+</body>
+</html>
