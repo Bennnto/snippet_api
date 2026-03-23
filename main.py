@@ -1,18 +1,19 @@
 from fastapi import FastAPI, Depends, Path, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from datetime import datetime
-
+import os
+from dotenv import load_dotenv
 
 # Data Base Module
-from sqlalchemy import create_engine, Column,  Integer, String, Boolean, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
+load_dotenv()
 
 app = FastAPI()
-DATABASE_URL = "sqlite:///./snip.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://snippet_db_19se_user:snippet_db_19se_user@localhost:5432/snippet_db_19se")
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
