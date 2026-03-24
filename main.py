@@ -1,9 +1,11 @@
-from fastapi import FastAPI, Depends, Path, Query
+from fastapi import FastAPI, Depends, Path, Query, HTTPException
+from fastapi import status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+from typing import Optional
 
 # Data Base Module
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime
@@ -47,6 +49,10 @@ class CodeSnip(BaseModel):
 class CodeResponse(CodeSnip):
     topic_id: int    
 
+class CodeEditRequest(BaseModel):
+    old_code : str | None = None
+    new_code : str
+    
 def get_db():
     db = SessionLocal()
     try :
@@ -93,3 +99,23 @@ async def delete_code(topic_id: int, db: Session = Depends(get_db)):
         db.commit()
         return {"Message": "Delete Code"}
     return {"Message": "Not Found Code"}
+
+@app.put("/snip/{topic_id}/edit")
+async def edit_code(topic_id: int, code: CodeSnip, edit_request: CodeEditRequest, db: Session = Depends(get_db)):
+    db_code = db.query(snipDB).filter(snipDB.topic_id == topic_id).first()
+    if db_code: 
+        if edit_request.old_code:
+            if edit_request.old_code not in db_code.code:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,  # ✅ CORRECT
+                    detail="Code block not found in snippet"
+            )
+            db_code.code = db_code.code.replace(edit_request.old_code, edit_request.new_code)
+        else :
+            db_code.code = edit_request.new_code
+        db.code.update = datetime.now()
+        db.commit()
+        db.refresh(db_code)
+        
+    return {
+        "Message": "Code Updated"}

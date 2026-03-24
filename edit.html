@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        input,
+        textarea {
+            display : flex;
+            flex-direction: column;
+            width : 100%;
+        }
+        button {
+            background : lightskyblue;
+            cursor : pointer;
+            color : black;
+            margin : 10px 5px 5px 0;
+            padding : 10px 5px 5px 5px;
+        }
+        input {
+            margin : 10px 5px 5px 0;
+            padding : 10px 5px 5px 5px;
+        }
+        textarea{
+            margin : 10px 5px 5px 0;
+            padding : 10px 5px 5px 5px;
+        }
+    </style>
+    <title>Edit-HTML</title>
+</head>
+<body>
+    <button onclick="window.location.href='./index.html'">Submit Page</button>
+    <button onclick="window.location.href='./addendum.html'">Code Index</button>
+    <input type="number" id="topic_id" placeholder="Topic ID Can see from index">
+    <button onclick="loadcode()">View Code</button>
+    <textarea id="code" placeholder="code"></textarea>
+    <button onclick="editcode()">Edit Code</button>
+    <div id ="result"></div>
+    <script>
+        const API_URL = "https://snippet-api-4irp.onrender.com"
+        async function editcode() {
+            const topic_id = document.getElementById('topic_id').value
+            const new_code = document.getElementById('code').value
+            try{
+                const response = await fetch(API_URL+'snip/'+topic_id+'/edit/', {
+                    method : "PUT",
+                    headers : { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        code : new_code
+                    })
+                });
+                
+                if (!response.ok){
+                    throw new Error(`Error: ${response.code} ${response.statusText}`)
+                }
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `Message: Code Updated Successful!`
+            } catch (error) {
+                console.error('Error', error);
+            }
+        }
+        async function loadcode() {
+            const topic_id = document.getElementById('topic_id').value
+
+            try {
+                const response = await fetch(API_URL+'snip/'+topic_id, {
+                    method : "GET",
+                    headers : { "Content-Type": "application/json" },
+            });
+
+            if (!response.ok){
+                    throw new Error(`Error: ${response.code} ${response.statusText}`)
+                }
+            const data = await response.json();
+            document.getElementById('result').innerHTML = `
+            <p>${data.topic_id} ${data.topic}</p>
+            <br><p>${data.description}</p>
+            <pre>${data.code}<pre>`
+        } catch (error) {
+            console.error('Error', error)
+        }
+        }
+    </script>
+</body>
+</html> 
