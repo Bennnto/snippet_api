@@ -101,21 +101,31 @@ async def delete_code(topic_id: int, db: Session = Depends(get_db)):
     return {"Message": "Not Found Code"}
 
 @app.put("/snip/{topic_id}/edit")
-async def edit_code(topic_id: int, code: CodeSnip, edit_request: CodeEditRequest, db: Session = Depends(get_db)):
+async def edit_code(topic_id: int, edit_request: CodeEditRequest, db: Session = Depends(get_db)):
     db_code = db.query(snipDB).filter(snipDB.topic_id == topic_id).first()
-    if db_code: 
-        if edit_request.old_code:
-            if edit_request.old_code not in db_code.code:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,  # ✅ CORRECT
-                    detail="Code block not found in snippet"
+    if not db_code:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Snippet not found"
+        )
+    
+    if edit_request.old_code:
+        if edit_request.old_code not in db_code.code:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Code block not found in snippet"
             )
-            db_code.code = db_code.code.replace(edit_request.old_code, edit_request.new_code)
-        else :
-            db_code.code = edit_request.new_code
-        db.code.update = datetime.now()
-        db.commit()
-        db.refresh(db_code)
-        
+        db_code.code = db_code.code.replace(edit_request.old_code, edit_request.new_code)
+    else:
+        db_code.code = edit_request.new_code
+    
+    db_code.update = datetime.utcnow()
+    db.commit()
+    db.refresh(db_code)
+    
     return {
-        "Message": "Code Updated"}
+        "message": "Code updated successfully",
+        "topic_id": db_code.topic_id,
+        "updated_code": db_code.code,
+        "update_timestamp": db_code.update
+    }

@@ -47,30 +47,45 @@
         async function editcode() {
             const topic_id = document.getElementById('topic_id').value
             const new_code = document.getElementById('code').value
+            
+            if (!topic_id) {
+                document.getElementById('result').innerHTML = '<p style="color:red;">Please enter Topic ID</p>'
+                return
+            }
+            
             try{
-                const response = await fetch(API_URL+'snip/'+topic_id+'/edit/', {
+                const response = await fetch(API_URL+'/snip/'+topic_id+'/edit', {
                     method : "PUT",
                     headers : { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        code : new_code
+                        old_code: "",
+                        new_code: new_code
                     })
                 });
                 
+                const data = await response.json();
+                
                 if (!response.ok){
-                    throw new Error(`Error: ${response.code} ${response.statusText}`)
+                    let errorMsg = 'Unknown error';
+                    if (data.detail) {
+                        errorMsg = typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail);
+                    } else if (data.message) {
+                        errorMsg = data.message;
+                    }
+                    throw new Error(`Error ${response.status}: ${errorMsg}`)
                 }
                 
-                const data = await response.json();
-                document.getElementById('result').innerHTML = `Message: Code Updated Successful!`
+                document.getElementById('result').innerHTML = `<p style="color:green;">✅ Message: Code Updated Successfully!</p>`
             } catch (error) {
-                console.error('Error', error);
+                console.error('Full Error:', error);
+                document.getElementById('result').innerHTML = `<p style="color:red;">❌ Error: ${error.message}</p>`
             }
         }
         async function loadcode() {
             const topic_id = document.getElementById('topic_id').value
 
             try {
-                const response = await fetch(API_URL+'snip/'+topic_id, {
+                const response = await fetch(API_URL+'/snip/'+topic_id, {
                     method : "GET",
                     headers : { "Content-Type": "application/json" },
             });
