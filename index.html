@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code snip</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <style>
         body {
             font-family: Arial;
@@ -34,12 +36,13 @@
         button:active{
             background: gray;
         }
+   
         
     </style>
 </head>
 <body>
-    <button onclick="window.location.href='./edit.html'">Edit Page</button>
-    <button onclick="window.location.href='./addendum.html'">code index</button>
+    <button onclick="window.location.href='/edit'">Edit Page</button>
+    <button onclick="window.location.href='/index'">code index</button>
     <input type="text" id="topic" placeholder="Topic">
     <input type="text" id="description" placeholder="description">
     <textarea id="code" placeholder="code here!"></textarea>
@@ -51,6 +54,16 @@
     <div id="result"></div>
     
     <script>
+        function escapeHTML(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }
+            return text.replace(/[&<>"']/g, m => map[m])
+        }
         const API_URL = "https://snippet-api-4irp.onrender.com"
         async function submitcode() {
             try{
@@ -94,6 +107,7 @@
         }
     }
 
+
         async function loadcode(){
             try{
             const topic_id = document.getElementById("topic_id").value.trim()
@@ -111,14 +125,19 @@
             }
             const data = await response.json();
             document.getElementById('result').innerHTML = `
-            <p>${data.topic_id}. ${data.topic}</p>
-            <br><p>${data.description}</p>
-            <br><pre>${data.code}</pre>`
+            <p><strong>ID ${data.topic_id}:</strong> ${data.topic}</p>
+            <p>${data.description}</p>
+            <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px;"><code>${escapeHTML(data.code)}</code></pre>`
+            
+            document.querySelectorAll('pre code').forEach(block => {
+                hljs.highlightElement(block)
+            })
         } catch (error) {
             console.log('Error', error)
             document.getElementById('result').innerHTML = `Error: ${error.message}`
         }
     }
+
 
         async function allcode(){
             try{
@@ -137,10 +156,13 @@
                 <div style="border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px;">
                     <p><strong>${item.topic_id}. ${item.topic}</strong></p>
                     <p>${item.description}</p>
-                    <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto;">${item.code}</pre>
+                    <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto;"><code>${escapeHTML(item.code)}</code></pre>
                 </div>`
             })
             document.getElementById('result').innerHTML = html
+            document.querySelectorAll('pre code').forEach(block => {
+                hljs.highlightElement(block)
+            })
         } catch (error) {
             console.log('Error', error)
             document.getElementById('result').innerHTML = `Error: ${error.message}`

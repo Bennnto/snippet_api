@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
     <style>
         body {
             font-family: Arial;
@@ -35,8 +38,8 @@
     <title>Edit-HTML</title>
 </head>
 <body>
-    <button onclick="window.location.href='./index.html'">Submit Page</button>
-    <button onclick="window.location.href='./addendum.html'">Code Index</button>
+    <button onclick="window.location.href='/home'">Submit Page</button>
+    <button onclick="window.location.href='/index'">Code Index</button>
     <input type="number" id="topic_id" placeholder="Topic ID Can see from index">
     <button onclick="loadcode()">View Code</button>
     <textarea id="code" placeholder="code"></textarea>
@@ -63,18 +66,12 @@
                     })
                 });
                 
-                const data = await response.json();
-                
                 if (!response.ok){
-                    let errorMsg = 'Unknown error';
-                    if (data.detail) {
-                        errorMsg = typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail);
-                    } else if (data.message) {
-                        errorMsg = data.message;
-                    }
-                    throw new Error(`Error ${response.status}: ${errorMsg}`)
+                    const error_data = await response.json();
+                    throw new Error(`Error ${response.status}: ${error_data.detail || response.statusText}`)
                 }
                 
+                const data = await response.json();
                 document.getElementById('result').innerHTML = `<p style="color:green;">✅ Message: Code Updated Successfully!</p>`
             } catch (error) {
                 console.error('Full Error:', error);
@@ -93,15 +90,30 @@
             if (!response.ok){
                     throw new Error(`Error: ${response.code} ${response.statusText}`)
                 }
+            let html =''
             const data = await response.json();
-            document.getElementById('result').innerHTML = `
+            html += `
             <p>${data.topic_id} ${data.topic}</p>
             <br><p>${data.description}</p>
-            <pre>${data.code}<pre>`
+            <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto;"><code>${escapeHTML(data.code)}</code<pre>`
+            document.getElementById('result').innerHTML = html
+            document.querySelectorAll('pre code').foreach(block => {
+                hljs.highlightElement(block)
+            })
         } catch (error) {
             console.error('Error', error)
         }
         }
+        function escapeHTML(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }
+        return text.replace(/[&<>"']/g, m => map[m])
+    }
     </script>
 </body>
 </html> 

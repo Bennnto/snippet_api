@@ -1,21 +1,42 @@
-from fastapi import FastAPI, Depends, Path, Query, HTTPException
+from fastapi import FastAPI, Depends, Path, Query, HTTPException, status
 from fastapi import status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from datetime import datetime
 import os
 from dotenv import load_dotenv
-from typing import Optional
+from typing import Optional, Annotated
 
 # Data Base Module
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
+# For Create Password / Username
+import secrets
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+
 load_dotenv()
 
 app = FastAPI()
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://snippet_db_19se_user:snippet_db_19se_user@localhost:5432/snippet_db_19se")
+
+# --- HTML Page Routes ---
+@app.get("/home", response_class=FileResponse)
+async def serve_home():
+    return FileResponse("index.html")
+
+@app.get("/edit", response_class=FileResponse)
+async def serve_edit():
+    return FileResponse("edit.html")
+
+@app.get("/index", response_class=FileResponse)
+async def serve_index():
+    return FileResponse("addendum.html")
+
+security = HTTPBasic()
+DATABASE_URL = "sqlite:///snipDB.db"
+#DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://snippet_db_19se_user:snippet_db_19se_user@localhost:5432/snippet_db_19se")
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -59,6 +80,27 @@ def get_db():
         yield db
     finally:
         db.close()
+
+def get_current_username(credentials: Annotated[HTTPBasicCredentials, Depends(security)],):
+    current_username_bytes = credentials.username.encode("utf8")
+    correct_username_bytes = b"Benpromkaew"
+    is_correct_username = secrets.compare_digest(current_username_bytes, correct_username_bytes)
+    current_password_bytes = credentials.password.encode("utf8")
+    correct_password_bytes = b"Ben107468"
+    is_correct_password = secrets.compare_digest(current_password_bytes, correct_password_bytes)
+    if not (is_correct_password and is_correct_username):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail = "Incorrect username or password",
+            headers = { "WWW-Authenticate": "Basic" }
+        )
+        return credentials.username, credentials.password
+
+@app.get("/users/me")
+def read_current_user(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
+    return {"username":credentials.username, "password":credentials.password}
+
+
 
 @app.post("/snip/")
 async def create_snip(code: CodeSnip, db: Session = Depends(get_db)):
