@@ -21,18 +21,20 @@ load_dotenv()
 
 app = FastAPI()
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # --- HTML Page Routes ---
 @app.get("/home", response_class=FileResponse)
 async def serve_home():
-    return FileResponse("index.html")
+    return FileResponse(os.path.join(BASE_DIR, "index.html"))
 
 @app.get("/edit", response_class=FileResponse)
 async def serve_edit():
-    return FileResponse("edit.html")
+    return FileResponse(os.path.join(BASE_DIR, "edit.html"))
 
 @app.get("/index", response_class=FileResponse)
 async def serve_index():
-    return FileResponse("addendum.html")
+    return FileResponse(os.path.join(BASE_DIR, "addendum.html"))
 
 security = HTTPBasic()
 DATABASE_URL = "sqlite:///snipDB.db"
