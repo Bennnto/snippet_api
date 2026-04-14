@@ -37,8 +37,13 @@ async def serve_index():
     return FileResponse(os.path.join(BASE_DIR, "addendum.html"))
 
 security = HTTPBasic()
-DATABASE_URL = "sqlite:///snipDB.db"
-#DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://snippet_db_19se_user:snippet_db_19se_user@localhost:5432/snippet_db_19se")
+# Use PostgreSQL on Render (set DATABASE_URL env var), fall back to SQLite locally
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///snipDB.db")
+
+# SQLAlchemy requires "postgresql://" not "postgres://" (Render uses the old prefix)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
