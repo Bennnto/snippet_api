@@ -14,77 +14,67 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #ffffff;
+            color: #333;
+            padding: 40px 20px;
         }
         
         .container {
-            max-width: 800px;
+            max-width: 700px;
             margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 30px;
         }
         
         .header h1 {
-            font-size: 32px;
-            font-weight: 700;
+            font-size: 28px;
+            font-weight: 600;
             margin-bottom: 8px;
         }
         
         .header p {
-            font-size: 14px;
-            opacity: 0.9;
+            font-size: 13px;
+            color: #666;
         }
         
         .nav-buttons {
             display: flex;
-            gap: 10px;
-            justify-content: center;
-            padding: 20px 30px;
-            border-bottom: 1px solid #e0e0e0;
-            background: #f8f9fa;
-        }
-        
-        .content {
-            padding: 30px;
-        }
-        
-        .section {
+            gap: 8px;
             margin-bottom: 30px;
         }
         
+        .content {
+            width: 100%;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
         .section-title {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .card {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
+            background: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
         
         .card.highlight {
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            border-color: #667eea;
+            background: #f5f5f5;
         }
         
         input[type="text"],
@@ -93,13 +83,13 @@
         textarea,
         select {
             width: 100%;
-            padding: 12px 14px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
+            padding: 10px 12px;
+            margin: 8px 0;
+            border: 1px solid #d0d0d0;
+            border-radius: 3px;
+            font-size: 13px;
             font-family: inherit;
-            transition: all 0.3s ease;
+            transition: border-color 0.2s;
         }
         
         input[type="text"]:focus,
@@ -107,50 +97,48 @@
         textarea:focus,
         select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #333;
         }
         
         textarea {
             resize: vertical;
-            min-height: 150px;
-            font-family: 'Courier New', monospace;
+            min-height: 140px;
+            font-family: 'Monaco', 'Courier New', monospace;
         }
         
         label {
-            font-weight: 600;
+            font-weight: 500;
             color: #333;
             display: block;
-            margin-top: 15px;
-            margin-bottom: 8px;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            font-size: 13px;
         }
         
         button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #333;
             color: white;
-            padding: 11px 20px;
+            padding: 9px 16px;
             border: none;
-            border-radius: 6px;
+            border-radius: 3px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 13px;
+            transition: background 0.2s;
             display: inline-block;
-            margin: 5px 5px 5px 0;
+            margin: 4px 4px 4px 0;
         }
         
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            background: #555;
         }
         
         button:active {
-            transform: translateY(0);
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+            background: #222;
         }
         
         button.secondary {
-            background: #e0e0e0;
+            background: #e5e5e5;
             color: #333;
         }
         
@@ -160,7 +148,7 @@
         
         .form-row {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: flex-end;
         }
         
@@ -170,10 +158,10 @@
         }
         
         .form-row input[type="color"] {
-            flex: 0 0 50px;
-            height: 40px;
+            flex: 0 0 44px;
+            height: 36px;
             cursor: pointer;
-            padding: 4px;
+            padding: 2px;
         }
         
         .form-row button {
@@ -182,12 +170,12 @@
         
         #tags_container {
             background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 3px;
+            padding: 10px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 8px;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 6px;
         }
         
         #tags_container label {
@@ -195,89 +183,93 @@
             align-items: center;
             margin: 0;
             font-weight: normal;
-            gap: 6px;
+            gap: 5px;
+            font-size: 13px;
         }
         
         #tags_container input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             cursor: pointer;
             margin: 0;
         }
         
         #createResult,
         #result {
-            background: #f8f9fa;
-            border-radius: 6px;
-            padding: 15px;
-            margin-top: 15px;
-            border-left: 4px solid #667eea;
+            background: #fafafa;
+            border-radius: 3px;
+            padding: 12px;
+            margin-top: 12px;
+            border: 1px solid #e5e5e5;
+            font-size: 13px;
         }
         
         #result h2 {
             color: #333;
-            margin-bottom: 15px;
+            font-size: 16px;
+            margin-bottom: 12px;
         }
         
         #result > div {
             background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 15px;
+            border: 1px solid #e5e5e5;
+            border-radius: 3px;
+            padding: 12px;
+            margin-bottom: 12px;
         }
         
         pre {
-            background: #1e1e1e !important;
-            border-radius: 6px !important;
+            background: #f5f5f5 !important;
+            border: 1px solid #e5e5e5 !important;
+            border-radius: 3px !important;
             overflow-x: auto !important;
-            padding: 15px !important;
+            padding: 12px !important;
         }
         
         code {
-            font-family: 'Courier New', monospace !important;
-            font-size: 13px !important;
+            font-family: 'Monaco', 'Courier New', monospace !important;
+            font-size: 12px !important;
         }
         
         .success {
-            color: #10b981;
+            color: #2d5016;
         }
         
         .error {
-            color: #ef4444;
+            color: #a4373a;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>💾 Code Snippets Manager</h1>
-            <p>Save, organize, and manage your code snippets with categories and tags</p>
+            <h1>Code Snippets</h1>
+            <p>Save and manage your code with categories and tags</p>
         </div>
         
         <div class="nav-buttons">
-            <button class="secondary" onclick="window.location.href='/edit'">📝 Edit Snippets</button>
-            <button class="secondary" onclick="window.location.href='/index'">📋 View Index</button>
+            <button class="secondary" onclick="window.location.href='/edit'">Edit</button>
+            <button class="secondary" onclick="window.location.href='/index'">Index</button>
         </div>
         
         <div class="content">
             <!-- Create Category/Tag Section -->
             <div class="section">
-                <div class="section-title">🆕 Create Category or Tag</div>
+                <div class="section-title">Create Category or Tag</div>
                 <div class="card highlight">
                     <div>
                         <label for="newCategoryName">Category Name</label>
                         <div class="form-row">
-                            <input type="text" id="newCategoryName" placeholder="Enter category name">
-                            <input type="color" id="newCategoryColor" value="#667eea">
+                            <input type="text" id="newCategoryName" placeholder="Name">
+                            <input type="color" id="newCategoryColor" value="#333333">
                             <button onclick="createCategory()">Create</button>
                         </div>
                     </div>
                     
-                    <div style="margin-top: 15px;">
+                    <div style="margin-top: 12px;">
                         <label for="newTagName">Tag Name</label>
                         <div class="form-row">
-                            <input type="text" id="newTagName" placeholder="Enter tag name">
+                            <input type="text" id="newTagName" placeholder="Name">
                             <button onclick="createTag()">Create</button>
                         </div>
                     </div>
@@ -288,39 +280,39 @@
             
             <!-- Add Code Snippet Section -->
             <div class="section">
-                <div class="section-title">➕ Add New Code Snippet</div>
+                <div class="section-title">New Snippet</div>
                 <div class="card">
-                    <label for="topic">Snippet Title *</label>
-                    <input type="text" id="topic" placeholder="e.g., Quick Sort Algorithm" required>
+                    <label for="topic">Title</label>
+                    <input type="text" id="topic" placeholder="Snippet title" required>
                     
                     <label for="description">Description</label>
-                    <input type="text" id="description" placeholder="Brief description of the snippet">
+                    <input type="text" id="description" placeholder="Optional description">
                     
                     <label for="category_id">Category</label>
                     <select id="category_id">
-                        <option value="">-- Select Category --</option>
+                        <option value="">Select category</option>
                     </select>
                     
                     <label for="tags">Tags</label>
                     <div id="tags_container"></div>
                     
-                    <label for="code">Code *</label>
-                    <textarea id="code" placeholder="Paste your code here..."></textarea>
+                    <label for="code">Code</label>
+                    <textarea id="code" placeholder="Paste code..."></textarea>
                     
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="submitcode()">✅ Submit Snippet</button>
-                        <button onclick="allcode()" class="secondary">📚 View All</button>
+                    <div style="display: flex; gap: 6px; margin-top: 12px;">
+                        <button onclick="submitcode()">Submit</button>
+                        <button onclick="allcode()" class="secondary">View All</button>
                     </div>
                 </div>
             </div>
             
             <!-- Search/Load Section -->
             <div class="section">
-                <div class="section-title">🔍 Search Snippet</div>
+                <div class="section-title">Search</div>
                 <div class="card">
                     <label for="topic_id">Snippet ID</label>
                     <div class="form-row">
-                        <input type="number" id="topic_id" placeholder="Enter snippet ID">
+                        <input type="number" id="topic_id" placeholder="ID">
                         <button onclick="loadcode()">Load</button>
                         <button onclick="deletecode()" class="secondary">Delete</button>
                     </div>
@@ -353,7 +345,7 @@
             const resultDiv = document.getElementById('createResult')
             
             if (!categoryName) {
-                resultDiv.innerHTML = '<p style="color:red;">❌ Category name cannot be empty</p>'
+                resultDiv.innerHTML = '<p class="error">Category name cannot be empty</p>'
                 return
             }
             
@@ -376,11 +368,11 @@
                 }
                 
                 const data = await response.json()
-                resultDiv.innerHTML = `<p style="color:green;">✅ Category "${categoryName}" created! ID: ${data.category_id}</p>`
+                resultDiv.innerHTML = `<p class="success">Category "${categoryName}" created (ID: ${data.category_id})</p>`
                 document.getElementById('newCategoryName').value = ''
                 loadCategories() // Refresh dropdown
             } catch (error) {
-                resultDiv.innerHTML = `<p style="color:red;">❌ Error: ${error.message}</p>`
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`
                 console.error('Error creating category:', error)
             }
         }
@@ -391,7 +383,7 @@
             const resultDiv = document.getElementById('createResult')
             
             if (!tagName) {
-                resultDiv.innerHTML = '<p style="color:red;">❌ Tag name cannot be empty</p>'
+                resultDiv.innerHTML = '<p class="error">Tag name cannot be empty</p>'
                 return
             }
             
@@ -413,11 +405,11 @@
                 }
                 
                 const data = await response.json()
-                resultDiv.innerHTML = `<p style="color:green;">✅ Tag "${tagName}" created! ID: ${data.tag_id}</p>`
+                resultDiv.innerHTML = `<p class="success">Tag "${tagName}" created (ID: ${data.tag_id})</p>`
                 document.getElementById('newTagName').value = ''
                 loadTags() // Refresh checkboxes
             } catch (error) {
-                resultDiv.innerHTML = `<p style="color:red;">❌ Error: ${error.message}</p>`
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`
                 console.error('Error creating tag:', error)
             }
         }
@@ -475,7 +467,7 @@
             const tag_ids = Array.from(document.querySelectorAll('.tag_checkbox:checked')).map(cb => parseInt(cb.value))
             
             if (!code_topic) {
-                document.getElementById("result").innerHTML = '<div class="card" style="border-left: 4px solid #ef4444;"><p class="error">❌ Topic cannot be empty</p></div>'
+                document.getElementById("result").innerHTML = '<div class="card"><p class="error">Title cannot be empty</p></div>'
                 return
             }
 
@@ -486,7 +478,7 @@
                 category_id: category_id ? parseInt(category_id) : null,
                 tag_ids: tag_ids
             }
-            document.getElementById("result").innerHTML = '<div class="card" style="border-left: 4px solid #667eea;"><p style="color: #667eea;">⏳ Creating snippet...</p></div>'
+            document.getElementById("result").innerHTML = '<div class="card"><p style="color: #666;">Creating snippet...</p></div>'
             console.log('Payload', payload)
 
             const response = await fetch(API_URL+'/snip/', {
@@ -500,14 +492,14 @@
                 throw new Error(`API Error : ${response.status} ${response.statusText}`)
             }
             const data = await response.json();
-            document.getElementById("result").innerHTML = `<div class="card" style="border-left: 4px solid #10b981;"><p class="success">✅ Code snippet created successfully!</p><p style="color: #666; font-size: 14px;">ID: <strong>${data.topic_id}</strong></p></div>`
+            document.getElementById("result").innerHTML = `<div class="card"><p class="success">Snippet created (ID: ${data.topic_id})</p></div>`
 
             document.getElementById("topic").value = '';
             document.getElementById("description").value = '';
             document.getElementById("code").value = '';
         } catch (error) {
             console.error('Full error details:', error);
-            document.getElementById('result').innerHTML = `<div class="card" style="border-left: 4px solid #ef4444;"><p class="error">❌ Error: ${error.message}</p><p style="font-size: 12px; color: #666; margin-top: 8px;">Check browser console (F12) for more details</p></div>`;
+            document.getElementById('result').innerHTML = `<div class="card"><p class="error">Error: ${error.message}</p></div>`;
         }
     }
 
@@ -516,10 +508,10 @@
             try{
             const topic_id = document.getElementById("topic_id").value.trim()
             if (!topic_id) {
-                document.getElementById('result').innerHTML = '<div class="card" style="border-left: 4px solid #ef4444;"><p class="error">❌ Please enter a snippet ID</p></div>'
+                document.getElementById('result').innerHTML = '<div class="card"><p class="error">Enter a snippet ID</p></div>'
                 return
             }
-            document.getElementById('result').innerHTML = '<div class="card" style="border-left: 4px solid #667eea;"><p style="color: #667eea;">⏳ Loading snippet...</p></div>'
+            document.getElementById('result').innerHTML = '<div class="card"><p style="color: #666;">Loading...</p></div>'
             
             const response = await fetch(API_URL+'/snip/'+topic_id, {
                 method: 'GET',
@@ -535,22 +527,21 @@
             
             document.getElementById('result').innerHTML = `
             <div class="card">
-                <div style="margin-bottom: 15px;">
-                    <h2 style="color: #667eea; margin-bottom: 5px;">ID ${data.topic_id}: ${data.topic}</h2>
-                    <p style="color: #666; font-style: italic;">${data.description || 'No description'}</p>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <h2 style="margin-bottom: 12px;">ID ${data.topic_id}</h2>
+                <p style="color: #666; margin-bottom: 12px;">${data.topic}</p>
+                <p style="color: #999; font-size: 12px; margin-bottom: 12px;">${data.description || ''}</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                     <div>
-                        <strong style="color: #666;">📁 Category:</strong>
-                        <p style="color: #333;">${categoryName}</p>
+                        <p style="font-size: 12px; color: #999;">CATEGORY</p>
+                        <p style="font-size: 13px;">${categoryName}</p>
                     </div>
                     <div>
-                        <strong style="color: #666;">🏷️ Tags:</strong>
-                        <p style="color: #333;">${tagNames}</p>
+                        <p style="font-size: 12px; color: #999;">TAGS</p>
+                        <p style="font-size: 13px;">${tagNames}</p>
                     </div>
                 </div>
-                <strong style="color: #666; display: block; margin-bottom: 8px;">💻 Code:</strong>
-                <pre style="background: #1e1e1e; padding: 15px; border-radius: 6px;"><code>${escapeHTML(data.code)}</code></pre>
+                <p style="font-size: 12px; color: #999; margin-bottom: 6px;">CODE</p>
+                <pre><code>${escapeHTML(data.code)}</code></pre>
             </div>`
             
             document.querySelectorAll('pre code').forEach(block => {
@@ -574,37 +565,31 @@
                 throw new Error(`API Error: ${response.status} ${response.statusText}`)
             }
             const data = await response.json();
-            let html = '<div style="margin-bottom: 20px;"><h2 style="color: #333; margin-bottom: 15px;">📚 All Code Snippets (' + data.length + ')</h2>'
+            let html = '<h2 style="margin-bottom: 16px;">Snippets (' + data.length + ')</h2>'
             data.forEach(item => {
                 let categoryLabel = item.category ? item.category.category_name : 'Uncategorized'
                 html += `
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                        <div>
-                            <h3 style="color: #667eea; margin-bottom: 3px;">ID ${item.topic_id}</h3>
-                            <h4 style="color: #333; margin-bottom: 5px;">${item.topic}</h4>
-                            <p style="color: #666; font-size: 13px;">${item.description || 'No description'}</p>
-                        </div>
-                        <span style="background: #667eea; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; white-space: nowrap;">${categoryLabel}</span>
-                    </div>
-                    <pre style="background: #1e1e1e; padding: 15px; border-radius: 6px; font-size: 12px;"><code>${escapeHTML(item.code.substring(0, 300))}${item.code.length > 300 ? '...' : ''}</code></pre>
+                    <p style="font-size: 12px; color: #999; margin-bottom: 4px;">ID ${item.topic_id} • ${categoryLabel}</p>
+                    <h3 style="margin-bottom: 6px; font-size: 15px;">${item.topic}</h3>
+                    <p style="color: #666; font-size: 12px; margin-bottom: 10px;">${item.description || ''}</p>
+                    <pre style="margin: 0;"><code>${escapeHTML(item.code.substring(0, 300))}${item.code.length > 300 ? '...' : ''}</code></pre>
                 </div>`
             })
-            html += '</div>'
             document.getElementById('result').innerHTML = html
             document.querySelectorAll('pre code').forEach(block => {
                 hljs.highlightElement(block)
             })
         } catch (error) {
             console.error('Error', error)
-            document.getElementById('result').innerHTML = `<div class="card" style="border-left: 4px solid #ef4444;"><p class="error">❌ Error: ${error.message}</p></div>`
+            document.getElementById('result').innerHTML = `<div class="card"><p class="error">Error: ${error.message}</p></div>`
         }
     }
         async function deletecode() {
             const topic_id = document.getElementById('topic_id').value
             try{
                 if (!topic_id) {
-                    document.getElementById('result').innerHTML = '<div class="card" style="border-left: 4px solid #ef4444;"><p class="error">❌ Please enter a snippet ID</p></div>'
+                    document.getElementById('result').innerHTML = '<div class="card"><p class="error">Enter a snippet ID</p></div>'
                     return
                 }
                 const response = await fetch(API_URL+'/snip/'+topic_id, {
@@ -615,11 +600,11 @@
                     throw new Error(`API Error : ${response.status} ${response.statusText}`)
                 }
                 const data = await response.json()
-                document.getElementById('result').innerHTML = `<div class="card" style="border-left: 4px solid #10b981;"><p class="success">✅ ${data.message}</p></div>`
+                document.getElementById('result').innerHTML = `<div class="card"><p class="success">${data.message}</p></div>`
                 document.getElementById('topic_id').value = ''
             } catch (error) {
                 console.error('Error', error)
-                document.getElementById('result').innerHTML = `<div class="card" style="border-left: 4px solid #ef4444;"><p class="error">❌ ${error.message}</p></div>`
+                document.getElementById('result').innerHTML = `<div class="card"><p class="error">${error.message}</p></div>`
             }
         }
     </script>
