@@ -7,69 +7,288 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #ffffff;
+            color: #333;
+            padding: 40px 20px;
         }
-        input,
-        textarea {
-            display : flex;
-            flex-direction: column;
-            width : 100%;
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
         }
-        button {
-            background : lightskyblue;
-            cursor : pointer;
-            color : black;
-            margin : 10px 5px 5px 0;
-            padding : 10px 5px 5px 5px;
+        
+        .header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 30px;
         }
-        input {
-            margin : 10px 5px 5px 0;
-            padding : 10px 5px 5px 5px;
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
-        textarea{
-            margin : 10px 5px 5px 0;
-            padding : 10px 5px 5px 5px;
+        
+        .header p {
+            font-size: 13px;
+            color: #666;
         }
-        select {
-            margin : 10px 5px 5px 0;
-            padding : 10px 5px 5px 5px;
+        
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .content {
             width: 100%;
         }
-        label {
-            margin-top: 10px;
-            font-weight: bold;
+        
+        .section {
+            margin-bottom: 40px;
         }
-        #tags_container {
-            margin: 10px 5px 5px 0;
-            padding: 10px;
-            border: 1px solid #ccc;
+        
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .card {
+            background: #fafafa;
+            border: 1px solid #e5e5e5;
             border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .card.highlight {
+            background: #f5f5f5;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="color"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            margin: 8px 0;
+            border: 1px solid #d0d0d0;
+            border-radius: 3px;
+            font-size: 13px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #333;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 140px;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+        
+        label {
+            font-weight: 500;
+            color: #333;
+            display: block;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        
+        button {
+            background: #333;
+            color: white;
+            padding: 9px 16px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            transition: background 0.2s;
+            display: inline-block;
+            margin: 4px 4px 4px 0;
+        }
+        
+        button:hover {
+            background: #555;
+        }
+        
+        button:active {
+            background: #222;
+        }
+        
+        button.secondary {
+            background: #e5e5e5;
+            color: #333;
+        }
+        
+        button.secondary:hover {
+            background: #d0d0d0;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        
+        .form-row input {
+            flex: 1;
+            margin: 0;
+        }
+        
+        .form-row button {
+            margin: 0;
+        }
+        
+        #tags_container {
+            background: white;
+            border: 1px solid #d0d0d0;
+            border-radius: 3px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 6px;
+        }
+        
+        #tags_container label {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            font-weight: normal;
+            gap: 5px;
+            font-size: 13px;
+        }
+        
+        #tags_container input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+            margin: 0;
+        }
+        
+        #result {
+            background: #fafafa;
+            border-radius: 3px;
+            padding: 12px;
+            margin-top: 12px;
+            border: 1px solid #e5e5e5;
+            font-size: 13px;
+        }
+        
+        #result h2 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        
+        #result > div {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 3px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        pre {
+            background: #f5f5f5 !important;
+            border: 1px solid #e5e5e5 !important;
+            border-radius: 3px !important;
+            overflow-x: auto !important;
+            padding: 12px !important;
+        }
+        
+        code {
+            font-family: 'Monaco', 'Courier New', monospace !important;
+            font-size: 12px !important;
+        }
+        
+        .success {
+            color: #2d5016;
+        }
+        
+        .error {
+            color: #a4373a;
         }
     </style>
-    <title>Edit-HTML</title>
+    <title>Edit Snippet</title>
 </head>
 <body>
-    <button onclick="window.location.href='/home'">Submit Page</button>
-    <button onclick="window.location.href='/index'">Code Index</button>
-    <h3>Edit Code Snippet</h3>
-    <input type="number" id="topic_id" placeholder="Topic ID Can see from index">
-    <button onclick="loadcode()">View Code</button>
-    
-    <label for="category_id"><strong>Category:</strong></label>
-    <select id="category_id">
-        <option value="">-- Select Category --</option>
-    </select>
-    
-    <label for="tags"><strong>Tags:</strong></label>
-    <div id="tags_container"></div>
-    
-    <textarea id="code" placeholder="code"></textarea>
-    <button onclick="editcode()">Edit Code</button>
-    <div id ="result"></div>
+    <div class="container">
+        <div class="header">
+            <h1>Edit Snippet</h1>
+            <p>Update code, description, category, and tags</p>
+        </div>
+        
+        <div class="nav-buttons">
+            <button class="secondary" onclick="window.location.href='/index'">Code Index</button>
+            <button class="secondary" onclick="window.location.href='/home'">Home</button>
+        </div>
+        
+        <div class="content">
+            <!-- Load Section -->
+            <div class="section">
+                <div class="section-title">Load Snippet</div>
+                <div class="card">
+                    <label for="topic_id">Snippet ID</label>
+                    <div class="form-row">
+                        <input type="number" id="topic_id" placeholder="Enter snippet ID">
+                        <button onclick="loadcode()">Load</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Edit Section -->
+            <div class="section">
+                <div class="section-title">Edit Snippet</div>
+                <div class="card">
+                    <label for="topic">Title</label>
+                    <input type="text" id="topic" placeholder="Snippet title">
+                    
+                    <label for="description">Description</label>
+                    <input type="text" id="description" placeholder="Description">
+                    
+                    <label for="category_id">Category</label>
+                    <select id="category_id">
+                        <option value="">Select category</option>
+                    </select>
+                    
+                    <label for="tags">Tags</label>
+                    <div id="tags_container"></div>
+                    
+                    <label for="code">Code</label>
+                    <textarea id="code" placeholder="Paste code..."></textarea>
+                    
+                    <div style="display: flex; gap: 6px; margin-top: 12px;">
+                        <button onclick="editcode()">Update Snippet</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Result Section -->
+            <div id="result"></div>
+        </div>
+    </div>
     <script>
         const API_URL = "https://snippet-api-4irp.onrender.com"
         
@@ -84,7 +303,7 @@
                 const response = await fetch(API_URL + '/categories')
                 const categories = await response.json()
                 const select = document.getElementById('category_id')
-                select.innerHTML = '<option value="">-- Select Category --</option>'
+                select.innerHTML = '<option value="">Select category</option>'
                 
                 categories.forEach(cat => {
                     const option = document.createElement('option')
@@ -120,23 +339,32 @@
         }
         async function editcode() {
             const topic_id = document.getElementById('topic_id').value
-            const new_code = document.getElementById('code').value
+            const topic = document.getElementById('topic').value.trim()
+            const description = document.getElementById('description').value
+            const code = document.getElementById('code').value
             const category_id = document.getElementById('category_id').value
             const tag_ids = Array.from(document.querySelectorAll('.tag_checkbox:checked')).map(cb => parseInt(cb.value))
             
             if (!topic_id) {
-                document.getElementById('result').innerHTML = '<p style="color:red;">Please enter Topic ID</p>'
+                document.getElementById('result').innerHTML = '<div class="card"><p class="error">Enter snippet ID</p></div>'
+                return
+            }
+            
+            if (!topic) {
+                document.getElementById('result').innerHTML = '<div class="card"><p class="error">Title cannot be empty</p></div>'
                 return
             }
             
             try{
                 const payload = {
-                    topic: "",
-                    description: "",
-                    code: new_code,
+                    topic: topic,
+                    description: description,
+                    code: code,
                     category_id: category_id ? parseInt(category_id) : null,
                     tag_ids: tag_ids
                 }
+                
+                document.getElementById('result').innerHTML = '<div class="card"><p style="color: #666;">Updating snippet...</p></div>'
                 
                 const response = await fetch(API_URL+'/snip/'+topic_id, {
                     method : "PUT",
@@ -146,45 +374,84 @@
                 
                 if (!response.ok){
                     const error_data = await response.json();
-                    throw new Error(`Error ${response.status}: ${error_data.detail || response.statusText}`)
+                    throw new Error(error_data.detail || response.statusText)
                 }
                 
                 const data = await response.json();
-                document.getElementById('result').innerHTML = `<p style="color:green;">✅ Message: Code Updated Successfully!</p>`
+                document.getElementById('result').innerHTML = '<div class="card"><p class="success">Snippet updated successfully</p></div>'
             } catch (error) {
                 console.error('Full Error:', error);
-                document.getElementById('result').innerHTML = `<p style="color:red;">❌ Error: ${error.message}</p>`
+                document.getElementById('result').innerHTML = `<div class="card"><p class="error">Error: ${error.message}</p></div>`
             }
         }
         async function loadcode() {
             const topic_id = document.getElementById('topic_id').value
 
             try {
+                if (!topic_id) {
+                    document.getElementById('result').innerHTML = '<div class="card"><p class="error">Enter snippet ID</p></div>'
+                    return
+                }
+                
+                document.getElementById('result').innerHTML = '<div class="card"><p style="color: #666;">Loading...</p></div>'
+                
                 const response = await fetch(API_URL+'/snip/'+topic_id, {
                     method : "GET",
                     headers : { "Content-Type": "application/json" },
             });
 
             if (!response.ok){
-                    throw new Error(`Error: ${response.code} ${response.statusText}`)
+                    throw new Error(`Error: ${response.statusText}`)
                 }
-            let html =''
+            
             const data = await response.json();
-            let categoryName = data.category ? data.category.category_name : 'N/A'
+            
+            // Populate fields
+            document.getElementById('topic').value = data.topic
+            document.getElementById('description').value = data.description || ''
+            document.getElementById('code').value = data.code
+            
+            // Set category
+            if (data.category) {
+                document.getElementById('category_id').value = data.category.category_id
+            }
+            
+            // Check tags
+            const tag_ids = data.tags ? data.tags.map(t => t.tag_id) : []
+            document.querySelectorAll('.tag_checkbox').forEach(checkbox => {
+                checkbox.checked = tag_ids.includes(parseInt(checkbox.value))
+            })
+            
+            // Show loaded data
+            let categoryName = data.category ? data.category.category_name : 'Uncategorized'
             let tagNames = data.tags ? data.tags.map(t => t.tag_name).join(', ') : 'None'
             
-            html += `
-            <p><strong>${data.topic_id}</strong> ${data.topic}</p>
-            <p><em>${data.description}</em></p>
-            <p><strong>Category:</strong> ${categoryName}</p>
-            <p><strong>Tags:</strong> ${tagNames}</p>
-            <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto;"><code>${escapeHTML(data.code)}</code></pre>`
+            let html = `
+            <div class="card">
+                <h2 style="margin-bottom: 12px;">ID ${data.topic_id}</h2>
+                <p style="color: #666; margin-bottom: 12px;"><strong>${data.topic}</strong></p>
+                <p style="color: #666; font-size: 12px; margin-bottom: 12px;">${data.description || ''}</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <p style="font-size: 12px; color: #999;">CATEGORY</p>
+                        <p style="font-size: 13px;">${categoryName}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 12px; color: #999;">TAGS</p>
+                        <p style="font-size: 13px;">${tagNames}</p>
+                    </div>
+                </div>
+                <p style="font-size: 12px; color: #999; margin-bottom: 6px;">CODE</p>
+                <pre><code>${escapeHTML(data.code)}</code></pre>
+            </div>`
+            
             document.getElementById('result').innerHTML = html
             document.querySelectorAll('pre code').forEach(block => {
                 hljs.highlightElement(block)
             })
         } catch (error) {
             console.error('Error', error)
+            document.getElementById('result').innerHTML = `<div class="card"><p class="error">Error: ${error.message}</p></div>`
         }
         }
         function escapeHTML(text) {
