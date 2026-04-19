@@ -65,25 +65,6 @@ snippet_tags = Table(
     Column('tag_id', Integer, ForeignKey('tag.tag_id'))
 )
 
-class snipDB(Base):
-    __tablename__ = "code"
-    
-    topic_id = Column(Integer, primary_key=True, index=True)
-    topic = Column(String)
-    description = Column(String, nullable=True)
-    code = Column(String)
-    category_id = Column(Integer, ForeignKey("category.category_id"), nullable=True)
-    update = Column(DateTime, default=datetime.utcnow)
-    
-    category = relationship("Category", back_populates="snippets")
-    tags = relationship("Tag", secondary=snippet_tags)
-# Create Data Base
-Base.metadata.create_all(bind=engine)
-
-class CodeEditRequest(BaseModel):
-    old_code : str | None = None
-    new_code : str
-    
 class Category(Base):
     __tablename__ = "category"
     category_id = Column(Integer, primary_key=True, index=True)
@@ -97,6 +78,26 @@ class Tag(Base):
     __tablename__ = "tag"
     tag_id = Column(Integer, primary_key=True, index=True)
     tag_name = Column(String, index=True)
+
+class snipDB(Base):
+    __tablename__ = "code"
+    
+    topic_id = Column(Integer, primary_key=True, index=True)
+    topic = Column(String)
+    description = Column(String, nullable=True)
+    code = Column(String)
+    category_id = Column(Integer, ForeignKey("category.category_id"), nullable=True)
+    update = Column(DateTime, default=datetime.utcnow)
+    
+    category = relationship("Category", back_populates="snippets")
+    tags = relationship("Tag", secondary=snippet_tags)
+
+# Create Data Base - MUST be after all models are defined
+Base.metadata.create_all(bind=engine)
+
+class CodeEditRequest(BaseModel):
+    old_code : str | None = None
+    new_code : str
 
 class Create_Category(BaseModel):
     category_name : str 
