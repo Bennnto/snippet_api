@@ -48,11 +48,19 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# Enable CORS for all origins - MUST be first middleware
+# Enable CORS with credentials support
+allowed_origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "https://snippet-api-4irp.onrender.com",
+    "https://*.onrender.com",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
