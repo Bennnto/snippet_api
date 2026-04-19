@@ -27,6 +27,8 @@ allowed_origins = [
     "http://localhost:3000",
     "http://localhost:8000",
     "https://snippet-api-4irp.onrender.com",
+    "https://api.bennnto.me",
+    "http://api.bennnto.me",
 ]
 
 app.add_middleware(
