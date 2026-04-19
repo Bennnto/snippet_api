@@ -36,6 +36,21 @@
         button:active{
             background: gray;
         }
+        select {
+            padding: 5px;
+            margin: 10px 0;
+            width: 100%;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        #tags_container {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
    
         
     </style>
@@ -45,6 +60,15 @@
     <button onclick="window.location.href='/index'">code index</button>
     <input type="text" id="topic" placeholder="Topic">
     <input type="text" id="description" placeholder="description">
+    
+    <label for="category_id"><strong>Category:</strong></label>
+    <select id="category_id">
+        <option value="">-- Select Category --</option>
+    </select>
+    
+    <label for="tags"><strong>Tags:</strong></label>
+    <div id="tags_container"></div>
+    
     <textarea id="code" placeholder="code here!"></textarea>
     <button onclick="submitcode()">Submit</button>
     <button onclick="allcode()">View All</button>
@@ -65,12 +89,60 @@
             return text.replace(/[&<>"']/g, m => map[m])
         }
         const API_URL = "https://snippet-api-4irp.onrender.com"
+        
+        // Load categories and tags on page load
+        window.addEventListener('load', () => {
+            loadCategories()
+            loadTags()
+        })
+        
+        async function loadCategories() {
+            try {
+                const response = await fetch(API_URL + '/categories')
+                const categories = await response.json()
+                const select = document.getElementById('category_id')
+                select.innerHTML = '<option value="">-- Select Category --</option>'
+                
+                categories.forEach(cat => {
+                    const option = document.createElement('option')
+                    option.value = cat.category_id
+                    option.textContent = cat.category_name
+                    select.appendChild(option)
+                })
+            } catch (error) {
+                console.error('Error loading categories:', error)
+            }
+        }
+        
+        async function loadTags() {
+            try {
+                const response = await fetch(API_URL + '/tags')
+                const tags = await response.json()
+                const container = document.getElementById('tags_container')
+                container.innerHTML = ''
+                
+                tags.forEach(tag => {
+                    const label = document.createElement('label')
+                    label.style.display = 'flex'
+                    label.style.marginBottom = '5px'
+                    label.innerHTML = `
+                        <input type="checkbox" value="${tag.tag_id}" class="tag_checkbox" style="width:auto; margin-right:10px;">
+                        ${tag.tag_name}
+                    `
+                    container.appendChild(label)
+                })
+            } catch (error) {
+                console.error('Error loading tags:', error)
+            }
+        }
+        
         async function submitcode() {
             try{
             const code_topic = document.getElementById("topic").value.trim()
             const code_description = document.getElementById("description").value
             const code_detail = document.getElementById("code").value
-            
+            const category_id = document.getElementById("category_id").value
+            const tag_ids = Array.from(document.querySelectorAll('.tag_checkbox:checked')).map(cb => parseInt(cb.value))
             
             if (!code_topic) {
                 document.getElementById("result").innerHTML = "Topic cannot be empty"
@@ -80,7 +152,9 @@
             const payload = {
                 topic : code_topic,
                 description : code_description || null,
-                code : code_detail 
+                code : code_detail,
+                category_id: category_id ? parseInt(category_id) : null,
+                tag_ids: tag_ids
             }
             document.getElementById("result").innerHTML = "Creating Code 🧑‍💻"
             console.log('Payload', payload)
