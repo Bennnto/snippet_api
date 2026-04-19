@@ -51,6 +51,12 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+        #createResult {
+            font-size: 14px;
+        }
+        input[type="text"], input[type="color"] {
+            font-size: 14px;
+        }
    
         
     </style>
@@ -58,7 +64,22 @@
 <body>
     <button onclick="window.location.href='/edit'">Edit Page</button>
     <button onclick="window.location.href='/index'">code index</button>
-    <input type="text" id="topic" placeholder="Topic">
+    
+    <h3>🆕 Create Category/Tag</h3>
+    <div style="border: 1px solid #ddd; padding: 15px; margin: 15px 0; border-radius: 5px; background: #f9f9f9;">
+        <div style="margin-bottom: 10px;">
+            <input type="text" id="newCategoryName" placeholder="Category Name" style="width: 200px; padding: 5px;">
+            <input type="color" id="newCategoryColor" value="#007BFF" style="width: 50px; height: 35px; cursor: pointer;">
+            <button onclick="createCategory()" style="padding: 5px 10px;">Add Category</button>
+        </div>
+        <div>
+            <input type="text" id="newTagName" placeholder="Tag Name" style="width: 200px; padding: 5px;">
+            <button onclick="createTag()" style="padding: 5px 10px;">Add Tag</button>
+        </div>
+        <div id="createResult" style="margin-top: 10px; color: green;"></div>
+    </div>
+    
+    <h3>➕ Add Code Snippet</h3>
     <input type="text" id="description" placeholder="description">
     
     <label for="category_id"><strong>Category:</strong></label>
@@ -87,10 +108,83 @@
                 "'": '&#039;'
             }
             return text.replace(/[&<>"']/g, m => map[m])
-        }
         const API_URL = "https://snippet-api-4irp.onrender.com"
         
-        // Load categories and tags on page load
+        // Create Category Function
+        async function createCategory() {
+            const categoryName = document.getElementById('newCategoryName').value.trim()
+            const categoryColor = document.getElementById('newCategoryColor').value
+            const resultDiv = document.getElementById('createResult')
+            
+            if (!categoryName) {
+                resultDiv.innerHTML = '<p style="color:red;">❌ Category name cannot be empty</p>'
+                return
+            }
+            
+            try {
+                const response = await fetch(API_URL + '/categories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + btoa('Benpromkaew:Ben107468')
+                    },
+                    body: JSON.stringify({
+                        category_name: categoryName,
+                        color: categoryColor
+                    })
+                })
+                
+                if (!response.ok) {
+                    const error = await response.json()
+                    throw new Error(error.detail || 'Failed to create category')
+                }
+                
+                const data = await response.json()
+                resultDiv.innerHTML = `<p style="color:green;">✅ Category "${categoryName}" created! ID: ${data.category_id}</p>`
+                document.getElementById('newCategoryName').value = ''
+                loadCategories() // Refresh dropdown
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color:red;">❌ Error: ${error.message}</p>`
+                console.error('Error creating category:', error)
+            }
+        }
+        
+        // Create Tag Function
+        async function createTag() {
+            const tagName = document.getElementById('newTagName').value.trim()
+            const resultDiv = document.getElementById('createResult')
+            
+            if (!tagName) {
+                resultDiv.innerHTML = '<p style="color:red;">❌ Tag name cannot be empty</p>'
+                return
+            }
+            
+            try {
+                const response = await fetch(API_URL + '/tags', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + btoa('Benpromkaew:Ben107468')
+                    },
+                    body: JSON.stringify({
+                        tag_name: tagName
+                    })
+                })
+                
+                if (!response.ok) {
+                    const error = await response.json()
+                    throw new Error(error.detail || 'Failed to create tag')
+                }
+                
+                const data = await response.json()
+                resultDiv.innerHTML = `<p style="color:green;">✅ Tag "${tagName}" created! ID: ${data.tag_id}</p>`
+                document.getElementById('newTagName').value = ''
+                loadTags() // Refresh checkboxes
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color:red;">❌ Error: ${error.message}</p>`
+                console.error('Error creating tag:', error)
+            }
+        }
         window.addEventListener('load', () => {
             loadCategories()
             loadTags()
