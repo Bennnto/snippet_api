@@ -108,6 +108,8 @@
                 "'": '&#039;'
             }
             return text.replace(/[&<>"']/g, m => map[m])
+        }
+        
         const API_URL = "https://snippet-api-4irp.onrender.com"
         
         // Create Category Function
@@ -292,9 +294,14 @@
                 throw new Error(`API Error: ${response.status} ${response.statusText}`)
             }
             const data = await response.json();
+            let categoryName = data.category ? data.category.category_name : 'N/A'
+            let tagNames = data.tags ? data.tags.map(t => t.tag_name).join(', ') : 'None'
+            
             document.getElementById('result').innerHTML = `
             <p><strong>ID ${data.topic_id}:</strong> ${data.topic}</p>
-            <p>${data.description}</p>
+            <p><em>${data.description}</em></p>
+            <p><strong>Category:</strong> ${categoryName}</p>
+            <p><strong>Tags:</strong> ${tagNames}</p>
             <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px;"><code>${escapeHTML(data.code)}</code></pre>`
             
             document.querySelectorAll('pre code').forEach(block => {
