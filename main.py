@@ -136,7 +136,8 @@ def get_db():
     finally:
         db.close()
 
-def get_current_username(credentials: Annotated[HTTPBasicCredentials, Depends(security)],):
+def get_current_username(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
+    """Verify credentials and return authenticated user"""
     current_username_bytes = credentials.username.encode("utf8")
     correct_username_bytes = b"Benpromkaew"
     is_correct_username = secrets.compare_digest(current_username_bytes, correct_username_bytes)
@@ -146,15 +147,16 @@ def get_current_username(credentials: Annotated[HTTPBasicCredentials, Depends(se
     if not (is_correct_password and is_correct_username):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail = "Incorrect username or password",
-            headers = { "WWW-Authenticate": "Basic" }
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"}
         )
-        return credentials.username, credentials.password
+    return credentials
 
 # ==== User Endpoint ==== #
 @app.get("/users/me")
-def read_current_user(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
-    return {"username":credentials.username, "password":credentials.password}
+def read_current_user(credentials: Annotated[HTTPBasicCredentials, Depends(get_current_username)]):
+    """Get current authenticated user info"""
+    return {"username": credentials.username, "authenticated": True}
 
 # ====== Tag Endpoint ====== #
 @app.post("/tags", response_model=Tag_Response, dependencies=[Depends(get_current_username)])
