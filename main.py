@@ -111,9 +111,15 @@ class Category_Response(BaseModel):
     category_name : str 
     color : str 
     
+    class Config:
+        from_attributes = True 
+    
 class Tag_Response(BaseModel):
     tag_id : int
     tag_name : str 
+    
+    class Config:
+        from_attributes = True 
     
 class CodeSnip(BaseModel):
     topic: str
@@ -127,6 +133,9 @@ class CodeResponse(CodeSnip):
     topic_id: int    
     category: Optional[Category_Response] = None
     tags: list[Tag_Response] = []
+    
+    class Config:
+        from_attributes = True
     
         
 def get_db():
@@ -231,35 +240,36 @@ async def create_snip(code: CodeSnip, db: Session = Depends(get_db)):
 
 @app.get("/snip/")
 async def all_snip(db: Session = Depends(get_db)):
-    return db.query(snipDB).all()
+    snippets = db.query(snipDB).all()
+    return snippets
 
 @app.get("/snip/{topic_id}", response_model=CodeResponse)
 async def retrieve_snip(topic_id: int, db: Session = Depends(get_db)):
     code = db.query(snipDB).filter(snipDB.topic_id == topic_id).first()
-    if code:
-        return code
-    return {"Message": "Cannot Retrieved Code"}
+    if not code:
+        raise HTTPException(status_code=404, detail="Code snippet not found")
+    return code
 
 @app.put("/snip/{topic_id}", response_model=CodeResponse)
 async def update_snip(topic_id: int, code: CodeSnip, db: Session = Depends(get_db)):
     db_code = db.query(snipDB).filter(snipDB.topic_id == topic_id).first()
-    if db_code:
-        for key, value in code.dict().items():
-            setattr(db_code, key, value)
-        db_code.update = datetime.utcnow()
-        db.commit()
-        db.refresh(db_code)
-        return db_code
-    return {"Message": "Not Found Code"}
+    if not db_code:
+        raise HTTPException(status_code=404, detail="Code snippet not found")
+    for key, value in code.dict().items():
+        setattr(db_code, key, value)
+    db_code.update = datetime.utcnow()
+    db.commit()
+    db.refresh(db_code)
+    return db_code
 
 @app.delete("/snip/{topic_id}")
 async def delete_code(topic_id: int, db: Session = Depends(get_db)):
     db_code = db.query(snipDB).filter(snipDB.topic_id == topic_id).first()
-    if db_code:
-        db.delete(db_code)
-        db.commit()
-        return {"Message": "Delete Code"}
-    return {"Message": "Not Found Code"}
+    if not db_code:
+        raise HTTPException(status_code=404, detail="Code snippet not found")
+    db.delete(db_code)
+    db.commit()
+    return {"message": "Code snippet deleted successfully"}
 
 @app.put("/snip/{topic_id}/edit")
 async def edit_code(topic_id: int, edit_request: CodeEditRequest, db: Session = Depends(get_db)):
