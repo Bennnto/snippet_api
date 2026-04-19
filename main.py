@@ -155,8 +155,8 @@ def get_current_username(credentials: Annotated[HTTPBasicCredentials, Depends(se
 # ==== User Endpoint ==== #
 @app.get("/users/me")
 def read_current_user(credentials: Annotated[HTTPBasicCredentials, Depends(get_current_username)]):
-    """Get current authenticated user info"""
-    return {"username": credentials.username, "authenticated": True}
+    """Check if user is authenticated"""
+    return {"authenticated": True, "message": "User authorized"}
 
 # ====== Tag Endpoint ====== #
 @app.post("/tags", response_model=Tag_Response, dependencies=[Depends(get_current_username)])
