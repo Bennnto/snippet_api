@@ -72,9 +72,8 @@
     <div id ="result"></div>
     <script>
         const API_URL = "https://snippet-api-4irp.onrender.com"
-        const LOCAL_API = "http://localhost:8000"
         
-        // Load categories on page load
+        // Load categories and tags on page load
         window.addEventListener('load', () => {
             loadCategories()
             loadTags()
@@ -82,7 +81,7 @@
         
         async function loadCategories() {
             try {
-                const response = await fetch(LOCAL_API + '/categories')
+                const response = await fetch(API_URL + '/categories')
                 const categories = await response.json()
                 const select = document.getElementById('category_id')
                 select.innerHTML = '<option value="">-- Select Category --</option>'
@@ -100,7 +99,7 @@
         
         async function loadTags() {
             try {
-                const response = await fetch(LOCAL_API + '/tags')
+                const response = await fetch(API_URL + '/tags')
                 const tags = await response.json()
                 const container = document.getElementById('tags_container')
                 container.innerHTML = ''

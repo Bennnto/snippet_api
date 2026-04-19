@@ -95,6 +95,32 @@ class snipDB(Base):
 # Create Data Base - MUST be after all models are defined
 Base.metadata.create_all(bind=engine)
 
+# Migration function to add missing columns to existing tables
+def migrate_database():
+    """Add missing columns to existing tables"""
+    from sqlalchemy import text, inspect
+    
+    with engine.connect() as conn:
+        inspector = inspect(engine)
+        
+        # Check if category_id column exists in code table
+        code_columns = [col['name'] for col in inspector.get_columns('code')]
+        
+        if 'category_id' not in code_columns:
+            print("Adding category_id column to code table...")
+            conn.execute(text('''
+                ALTER TABLE code 
+                ADD COLUMN category_id INTEGER REFERENCES category(category_id)
+            '''))
+            conn.commit()
+            print("✅ Migration complete: category_id column added")
+
+# Run migration on startup
+try:
+    migrate_database()
+except Exception as e:
+    print(f"⚠️ Migration warning (might already exist): {e}")
+
 class CodeEditRequest(BaseModel):
     old_code : str | None = None
     new_code : str
