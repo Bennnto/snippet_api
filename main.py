@@ -21,6 +21,22 @@ load_dotenv()
 
 app = FastAPI()
 
+# Enable CORS — must be added before routes
+allowed_origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "https://snippet-api-4irp.onrender.com",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+)
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # --- HTML Page Routes ---
@@ -48,21 +64,7 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# Enable CORS with credentials support
-allowed_origins = [
-    "http://localhost",
-    "http://localhost:3000",
-    "http://localhost:8000",
-    "https://snippet-api-4irp.onrender.com",
-]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
-)
 
 # Association table for many-to-many relationship
 snippet_tags = Table(
