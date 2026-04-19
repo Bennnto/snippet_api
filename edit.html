@@ -34,22 +34,96 @@
             margin : 10px 5px 5px 0;
             padding : 10px 5px 5px 5px;
         }
+        select {
+            margin : 10px 5px 5px 0;
+            padding : 10px 5px 5px 5px;
+            width: 100%;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        #tags_container {
+            margin: 10px 5px 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
     <title>Edit-HTML</title>
 </head>
 <body>
     <button onclick="window.location.href='/home'">Submit Page</button>
     <button onclick="window.location.href='/index'">Code Index</button>
+    <h3>Edit Code Snippet</h3>
     <input type="number" id="topic_id" placeholder="Topic ID Can see from index">
     <button onclick="loadcode()">View Code</button>
+    
+    <label for="category_id"><strong>Category:</strong></label>
+    <select id="category_id">
+        <option value="">-- Select Category --</option>
+    </select>
+    
+    <label for="tags"><strong>Tags:</strong></label>
+    <div id="tags_container"></div>
+    
     <textarea id="code" placeholder="code"></textarea>
     <button onclick="editcode()">Edit Code</button>
     <div id ="result"></div>
     <script>
         const API_URL = "https://snippet-api-4irp.onrender.com"
+        const LOCAL_API = "http://localhost:8000"
+        
+        // Load categories on page load
+        window.addEventListener('load', () => {
+            loadCategories()
+            loadTags()
+        })
+        
+        async function loadCategories() {
+            try {
+                const response = await fetch(LOCAL_API + '/categories')
+                const categories = await response.json()
+                const select = document.getElementById('category_id')
+                select.innerHTML = '<option value="">-- Select Category --</option>'
+                
+                categories.forEach(cat => {
+                    const option = document.createElement('option')
+                    option.value = cat.category_id
+                    option.textContent = cat.category_name
+                    select.appendChild(option)
+                })
+            } catch (error) {
+                console.error('Error loading categories:', error)
+            }
+        }
+        
+        async function loadTags() {
+            try {
+                const response = await fetch(LOCAL_API + '/tags')
+                const tags = await response.json()
+                const container = document.getElementById('tags_container')
+                container.innerHTML = ''
+                
+                tags.forEach(tag => {
+                    const label = document.createElement('label')
+                    label.style.display = 'flex'
+                    label.style.marginBottom = '5px'
+                    label.innerHTML = `
+                        <input type="checkbox" value="${tag.tag_id}" class="tag_checkbox" style="width:auto; margin-right:10px;">
+                        ${tag.tag_name}
+                    `
+                    container.appendChild(label)
+                })
+            } catch (error) {
+                console.error('Error loading tags:', error)
+            }
+        }
         async function editcode() {
             const topic_id = document.getElementById('topic_id').value
             const new_code = document.getElementById('code').value
+            const category_id = document.getElementById('category_id').value
+            const tag_ids = Array.from(document.querySelectorAll('.tag_checkbox:checked')).map(cb => parseInt(cb.value))
             
             if (!topic_id) {
                 document.getElementById('result').innerHTML = '<p style="color:red;">Please enter Topic ID</p>'
@@ -57,13 +131,18 @@
             }
             
             try{
-                const response = await fetch(API_URL+'/snip/'+topic_id+'/edit', {
+                const payload = {
+                    topic: "",
+                    description: "",
+                    code: new_code,
+                    category_id: category_id ? parseInt(category_id) : null,
+                    tag_ids: tag_ids
+                }
+                
+                const response = await fetch(API_URL+'/snip/'+topic_id, {
                     method : "PUT",
                     headers : { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        old_code: "",
-                        new_code: new_code
-                    })
+                    body: JSON.stringify(payload)
                 });
                 
                 if (!response.ok){
@@ -92,12 +171,17 @@
                 }
             let html =''
             const data = await response.json();
+            let categoryName = data.category ? data.category.category_name : 'N/A'
+            let tagNames = data.tags ? data.tags.map(t => t.tag_name).join(', ') : 'None'
+            
             html += `
-            <p>${data.topic_id} ${data.topic}</p>
-            <br><p>${data.description}</p>
-            <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto;"><code>${escapeHTML(data.code)}</code<pre>`
+            <p><strong>${data.topic_id}</strong> ${data.topic}</p>
+            <p><em>${data.description}</em></p>
+            <p><strong>Category:</strong> ${categoryName}</p>
+            <p><strong>Tags:</strong> ${tagNames}</p>
+            <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto;"><code>${escapeHTML(data.code)}</code></pre>`
             document.getElementById('result').innerHTML = html
-            document.querySelectorAll('pre code').foreach(block => {
+            document.querySelectorAll('pre code').forEach(block => {
                 hljs.highlightElement(block)
             })
         } catch (error) {

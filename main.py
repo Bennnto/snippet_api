@@ -9,9 +9,9 @@ from dotenv import load_dotenv
 from typing import Optional, Annotated
 
 # Data Base Module
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, ForeignKey, Table
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker, Session, relationship
 
 # For Create Password / Username
 import secrets
@@ -57,6 +57,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Association table for many-to-many relationship
+snippet_tags = Table(
+    'snippet_tags',
+    Base.metadata,
+    Column('snippet_id', Integer, ForeignKey('code.topic_id')),
+    Column('tag_id', Integer, ForeignKey('tag.tag_id'))
+)
+
 class snipDB(Base):
     __tablename__ = "code"
     
@@ -64,23 +72,62 @@ class snipDB(Base):
     topic = Column(String)
     description = Column(String, nullable=True)
     code = Column(String)
+    category_id = Column(Integer, ForeignKey("category.category_id"), nullable=True)
     update = Column(DateTime, default=datetime.utcnow)
+    
+    category = relationship("Category", back_populates="snippets")
+    tags = relationship("Tag", secondary=snippet_tags)
 # Create Data Base
 Base.metadata.create_all(bind=engine)
-    
-class CodeSnip(BaseModel):
-    topic: str
-    description: str | None = None
-    code: str
-    update: datetime = Field(default_factory=datetime.utcnow)
-
-class CodeResponse(CodeSnip):
-    topic_id: int    
 
 class CodeEditRequest(BaseModel):
     old_code : str | None = None
     new_code : str
     
+class Category(Base):
+    __tablename__ = "category"
+    category_id = Column(Integer, primary_key=True, index=True)
+    category_name = Column(String, index=True, nullable=False)
+    color = Column(String, default="#007BFF")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    snippets = relationship("snipDB", back_populates="category")
+
+class Tag(Base):
+    __tablename__ = "tag"
+    tag_id = Column(Integer, primary_key=True, index=True)
+    tag_name = Column(String, index=True)
+
+class Create_Category(BaseModel):
+    category_name : str 
+    color : str 
+    
+class Create_Tag(BaseModel):
+    tag_name : str
+    
+class Category_Response(BaseModel):
+    category_id : int
+    category_name : str 
+    color : str 
+    
+class Tag_Response(BaseModel):
+    tag_id : int
+    tag_name : str 
+    
+class CodeSnip(BaseModel):
+    topic: str
+    description: str | None = None
+    code: str
+    category_id: Optional[int] = None
+    tag_ids: Optional[list[int]] = []
+    update: datetime = Field(default_factory=datetime.utcnow)
+
+class CodeResponse(CodeSnip):
+    topic_id: int    
+    category: Optional[Category_Response] = None
+    tags: list[Tag_Response] = []
+    
+        
 def get_db():
     db = SessionLocal()
     try :
@@ -103,15 +150,77 @@ def get_current_username(credentials: Annotated[HTTPBasicCredentials, Depends(se
         )
         return credentials.username, credentials.password
 
+# ==== User Endpoint ==== #
 @app.get("/users/me")
 def read_current_user(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
     return {"username":credentials.username, "password":credentials.password}
 
+# ====== Tag Endpoint ====== #
+@app.post("/tags", response_model=Tag_Response, dependencies=[Depends(get_current_username)])
+def create_tag(tag: Create_Tag, db: Session = Depends(get_db)):
+    db_tag = Tag(tag_name=tag.tag_name)
+    db.add(db_tag)
+    db.commit()
+    db.refresh(db_tag)
+    return db_tag
+
+@app.get("/tags", response_model=list[Tag_Response])
+def list_tag(db: Session = Depends(get_db)):
+    return db.query(Tag).all()
+
+@app.delete("/tags/{tag_id}", dependencies=[Depends(get_current_username)])
+def delete_tag(tag_id: int, db: Session = Depends(get_db)):
+    tag = db.query(Tag).filter(Tag.tag_id == tag_id).first()
+    if not tag :
+        raise HTTPException(status_code=404, detail="Tag not found")
+    db.delete(tag)
+    db.commit()
+    return {"message": "Tag deleted"}
+
+# ===== Category Endpoint ====== #
+@app.post("/categories", response_model=Category_Response, dependencies=[Depends(get_current_username)])
+def create_category(category: Create_Category, db: Session = Depends(get_db)):
+    db_category = Category(**category.dict())
+    db.add(db_category)
+    db.commit()
+    db.refresh(db_category)
+    return db_category
+
+@app.get('/categories', response_model=list[Category_Response])
+def list_category(db: Session = Depends(get_db)):
+    category = db.query(Category).all()
+    return category
+
+@app.get('/categories/{category_id}', response_model=Category_Response)
+def get_category(category_id:int, db : Session = Depends(get_db)):
+    category = db.query(Category).filter(Category.category_id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    return category
 
 
-@app.post("/snip/")
+@app.delete("/categories/{category_id}", dependencies=[Depends(get_current_username)])
+def delete_category(category_id:int, db : Session = Depends(get_db)):
+    category = db.query(Category).filter(Category.category_id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    db.delete(category)
+    db.commit()
+    return {"message": "Category deleted"}
+
+# ==== Snippet Endpoint ==== #
+@app.post("/snip/", response_model=CodeResponse, dependencies=[Depends(get_current_username)])
 async def create_snip(code: CodeSnip, db: Session = Depends(get_db)):
-    db_snip = snipDB(**code.dict())
+    db_snip = snipDB(
+        topic=code.topic,
+        description=code.description,
+        code=code.code,
+        category_id=code.category_id
+    )
+    if code.tag_ids:
+        tags = db.query(Tag).filter(Tag.tag_id.in_(code.tag_ids)).all()
+        db_snip.tags = tags
+        
     db.add(db_snip)
     db.commit()
     db.refresh(db_snip)
