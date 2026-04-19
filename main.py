@@ -54,14 +54,13 @@ allowed_origins = [
     "http://localhost:3000",
     "http://localhost:8000",
     "https://snippet-api-4irp.onrender.com",
-    "https://*.onrender.com",
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -272,7 +271,7 @@ async def create_snip(code: CodeSnip, db: Session = Depends(get_db)):
     db.refresh(db_snip)
     return db_snip
 
-@app.get("/snip/")
+@app.get("/snip/", response_model=list[CodeResponse])
 async def all_snip(db: Session = Depends(get_db)):
     snippets = db.query(snipDB).all()
     return snippets
